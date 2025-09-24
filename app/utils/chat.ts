@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import { Mistral } from "@mistralai/mistralai";
 
 export default async function chat({
   apiKey,
@@ -7,9 +7,9 @@ export default async function chat({
   apiKey: string;
   input: string;
 }) {
-  const client = new OpenAI({ apiKey });
-  const stream = await client.chat.completions.create({
-    model: "gpt-3.5-turbo",
+  const mistral = new Mistral({apiKey});
+  const stream = await mistral.chat.stream({
+    model: "mistral-small-latest",
     messages: [
       { role: "user", content: input },
       {
