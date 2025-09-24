@@ -1,19 +1,24 @@
-import chat from "../utils/chat"
-import { NextApiRequest, NextApiResponse } from 'next'
- 
- 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const {apiKey, input} = req.body;
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': "no-store",
-  })
-  const response = chat({apiKey, input})
+import chat from '../utils/chat'; 
+
+export const POST = async (req: Request) => {
+  const { apiKey, input } = await req.json();
+
+  const stream = new TransformStream();
+  const writer = stream.writable.getWriter();
+
+  const encoder = new TextEncoder();
+  writer.write(encoder.encode('data: Starting stream\n\n'));
+
+  const response = chat({ apiKey, input });
   for await (const chunk of await response) {
-    res.write(`data: ${chunk}\n\n`)
+    writer.write(encoder.encode(`data: ${chunk}\n\n`));
   }
-  res.end()
-}
+
+  writer.close();
+  return new Response(stream.readable, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-store',
+    },
+  });
+};
