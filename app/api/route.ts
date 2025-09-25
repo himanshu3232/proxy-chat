@@ -7,11 +7,11 @@ export const POST = async (req: Request) => {
   const writer = stream.writable.getWriter();
 
   const encoder = new TextEncoder();
-  writer.write(encoder.encode('data: Starting stream\n\n'));
 
   const response = chat({ apiKey, input });
+  
   for await (const chunk of await response) {
-    writer.write(encoder.encode(`data: ${chunk}\n\n`));
+    writer.write(encoder.encode(`data: ${chunk.data.object}\n\n`));
   }
 
   writer.close();
@@ -22,4 +22,5 @@ export const POST = async (req: Request) => {
     },
   });
 };
+
 
