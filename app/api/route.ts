@@ -1,14 +1,14 @@
 import chat from '../utils/chat'; 
 
 export const POST = async (req: Request) => {
-  const { apiKey, input } = await req.json();
+  const { apiKey, input, userName } = await req.json();
 
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
 
   const encoder = new TextEncoder();
 
-  const response = chat({ apiKey, input });
+  const response = chat({ apiKey, input, userName });
   
   for await (const chunk of await response) {
     const text = chunk.data.choices[0].delta.content;
