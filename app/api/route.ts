@@ -11,7 +11,8 @@ export const POST = async (req: Request) => {
   const response = chat({ apiKey, input });
   
   for await (const chunk of await response) {
-    writer.write(encoder.encode(`data: ${chunk.data.object}\n\n`));
+    const text = chunk.data.choices[0].delta.content;
+    typeof text === "string" && writer.write(encoder.encode(`data: ${text}\n\n`));
   }
 
   writer.close();
