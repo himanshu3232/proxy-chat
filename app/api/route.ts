@@ -12,6 +12,7 @@ export const POST = async (req: Request) => {
   
   for await (const chunk of await response) {
     const text = chunk.data.choices[0].delta.content;
+    console.log("controller", text)
     typeof text === "string" && writer.write(encoder.encode(`data: ${text}\n\n`));
   }
 

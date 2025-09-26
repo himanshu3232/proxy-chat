@@ -22,5 +22,6 @@ export default async function chat({
     stream: true,
   });
 
+  console.log(JSON.stringify(stream))
   return stream;
 }
